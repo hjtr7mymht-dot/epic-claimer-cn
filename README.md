@@ -59,12 +59,15 @@ docker compose up -d --no-build
 ✓ Claimed 'GMH - Good Morning Human' successfully!
 ✓ Claimed 'Highway Driving' successfully!
 ✓ Claimed 'Dark Mystery' successfully!
+✓ Claimed 'Horse Racing' successfully!
+✓ Claimed 'Epic World - Hunt For Quest' successfully!
+✓ Claimed 'Quiztopia : The Ultimate Trivia' successfully!
 ✓ Claimed 'Idle Champions of the Forgotten Realms (Android)' successfully!
 ✓ Claimed 'Idle Champions of the Forgotten Realms (iOS)' successfully!
 'Chants of Sennaar (Android)' is not available in your region on Epic, skipping.
 ```
 
-补丁前同一环境是 0 领取。
+一轮 9 款进库。补丁前同一环境是 0 领取。
 
 ## 常见问题
 
