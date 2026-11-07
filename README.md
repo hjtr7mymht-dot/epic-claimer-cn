@@ -31,7 +31,7 @@ WARNING  No purchase/claim button found for 'Flotsam'.
 需要 Docker（Docker Desktop / colima / podman 都行）。
 
 ```bash
-git clone https://github.com/<you>/epic-claimer-cn.git
+git clone https://github.com/hjtr7mymht-dot/epic-claimer-cn.git
 cd epic-claimer-cn
 bash scripts/setup.sh
 ```
