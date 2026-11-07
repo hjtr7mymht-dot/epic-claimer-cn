@@ -1,0 +1,22 @@
+services:
+  app:
+    image: ghcr.io/p-adamiec/free-games-claimer-remaster:${FGC_TAG:-latest}
+    container_name: fgc-remaster
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    ports:
+      - "${NOVNC_PORT:-7080}:7080"
+    volumes:
+      - fgc_data:/fgc/data
+      # 中国网络补丁：等待 Cloudflare 挑战结束后再读取页面（见 patches/）
+      - ./src/stores:/fgc/src/stores:ro
+    env_file:
+      - .env
+    healthcheck:
+      test: pgrep python3 && curl --fail http://localhost:7080 || exit 1
+      interval: 10s
+      timeout: 5s
+
+volumes:
+  fgc_data:

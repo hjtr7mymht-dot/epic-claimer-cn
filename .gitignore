@@ -1,0 +1,4 @@
+src/
+.upstream.tar.gz
+.env
+*.log

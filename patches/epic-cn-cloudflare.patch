@@ -1,0 +1,53 @@
+--- a/src/stores/epic.py
++++ b/src/stores/epic.py
+@@ -77,8 +77,9 @@
+     }
+ 
+     // Epic swaps the whole product page for this sentence when the game is blocked where you are.
+-    const heading = (document.querySelector('h1')?.textContent || '').toLowerCase();
+-    if (heading.includes('unavailable in your platform or region')) return { text: '', flow: 'region' };
++    // It is not always an <h1>, so the whole visible text is checked.
++    const pageText = ((document.body && document.body.innerText) || '').toLowerCase();
++    if (pageText.includes('unavailable in your platform or region')) return { text: '', flow: 'region' };
+ 
+     return { text: '', flow: 'unknown' };
+ })())
+@@ -1048,10 +1049,15 @@
+     # Claim a single game
+     # ------------------------------------------------------------------
+ 
+-    async def _page_state(self, tries: int = 15) -> dict:
+-        """Read the product page's main action button: {"text", "flow"}."""
++    async def _page_state(self, tries: int = 45) -> dict:
++        """Read the product page's main action button: {"text", "flow"}.
++
++        Waits up to ``tries`` seconds: behind Cloudflare (store.epicgames.com from a
++        flagged address) the product page renders well after the first paint, and a
++        15 second cut-off read every page as having no button at all.
++        """
+         state = {"text": "", "flow": "unknown"}
+-        for _ in range(tries):
++        for i in range(tries):
+             raw = await self.page.evaluate(PAGE_STATE_JS)
+             try:
+                 state = json.loads(raw) if isinstance(raw, str) else state
+@@ -1059,6 +1065,10 @@
+                 state = {"text": "", "flow": "unknown"}
+             if state.get("text") or is_region_locked(state):
+                 break
++            # A Turnstile interstitial can show up after the page was opened: let it pass.
++            if i in (5, 15) and await self._human_challenge_present():
++                if await self._wait_out_challenge("Epic", store_key=self.store_name, ask=True):
++                    await self.sleep(4)
+             await self.sleep(1)
+         return state
+ 
+@@ -1089,7 +1099,7 @@
+         if not (from_list and await self._click_game_tile(url)):
+             logger.debug("Opening %s by its address.", url)
+             await self.page.get(url)
+-        await self.sleep(4)
++        await self.sleep(7)
+         if not await self._human_challenge_present():
+             return True
+         # Cloudflare reloads the page itself once its check passes, so there is no second load here.
